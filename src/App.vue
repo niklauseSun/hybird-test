@@ -39,7 +39,6 @@ export default {
       });
     },
     scanAction() {
-      console.log('quick.util.selectImage', quick.util);
       quick.util.scan({
         success: function(result) {
           console.log('result', result);
