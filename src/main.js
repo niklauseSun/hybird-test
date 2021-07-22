@@ -13,16 +13,16 @@ Vue.prototype.quick = quick;
 
 console.log('quick', quick);
 
-
 quick.error(function(error) {
-    alert(JSON.stringify(error));
+  alert(JSON.stringify(error));
 });
 
 quick.config({
   // 可以传入需要注册的拓展组件-如果原生有支持的话，也可以不传
 });
-quick.ready(function() {
-    // TODO: 处理验证成功后的事情，例如调用api
+
+quick.ready(function(e) {
+  // TODO: 处理验证成功后的事情，例如调用api
 });
 
 new Vue({
