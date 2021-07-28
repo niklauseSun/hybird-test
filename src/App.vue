@@ -2,6 +2,12 @@
   <div id="app">
     <div>测试</div>
     <div class="action-list">
+      <img
+        style="width: 100px;height: 100px"
+        :src="imageName"
+        v-if="imageName"
+      />
+      <input type="file" @change="tirggerFile($event)" />
       <div class="action-button" @click="alertAction">
         <span>alert</span>
       </div>
@@ -16,6 +22,9 @@
       </div>
       <div class="action-button" @click="takePhoto">
         <span>拍照</span>
+      </div>
+      <div class="action-button" @click="chooseFile">
+        <span>选择文件</span>
       </div>
       <div class="action-button" @click="loginWithOutToken">
         <span>登录不需要token</span>
@@ -60,6 +69,11 @@
 <script>
 export default {
   name: 'App',
+  data() {
+    return {
+      imageName: undefined
+    };
+  },
   mounted() {
     JSBridge.registerHandler('onChannelJoinChanged', (e) => {
       console.log('onChannelJoinChanged', e);
@@ -78,6 +92,12 @@ export default {
     });
   },
   methods: {
+    tirggerFile(event) {
+      //  String ACCEPT_IMAGE = "image";
+      // String ACCEPT_CAMERA = "camera";
+      // String ACCEPT_FILE = "file";
+      console.log('triggerFile', event.target.files);
+    },
     alertAction() {
       quick.ui.alert({
         title: '标题',
@@ -110,8 +130,18 @@ export default {
         photoCount: 9,
         previewEnabled: 1,
         selectedPhotos: [],
-        success: function(result) {
-          console.log('selectImages', result);
+        success: (result) => {
+          console.log('selectImages', result.resultData);
+          this.imageName = 'http://localimg' + result.resultData;
+
+          var fr = new FileReader();
+          fr.readAsDataURL(this.imageName);
+          fr.onload = (e) => {
+            console.log('fileRead', e);
+          };
+          fr.onerror = (e) => {
+            console.log('fileRead err', e);
+          };
           /**
          * 选择完图片后返回
          * {
@@ -125,7 +155,7 @@ export default {
     takePhoto() {
       quick.util.cameraImage({
         corp: 1,
-        success: function(result) {
+        success: (result) => {
           console.log('selectImages', result);
           /**
          * 拍完照后返回
@@ -135,6 +165,14 @@ export default {
          */
         },
         error: function(error) {}
+      });
+    },
+    chooseFile() {
+      quick.util.selectFile({
+        className: 'FileChooseActivity',
+        success: (result) => {
+          console.log('selectFile', result);
+        }
       });
     },
     loginWithOutToken() {
@@ -215,7 +253,7 @@ export default {
       quick.taketosee.joinAgoraCallChannel({
         // 语音appId
         accessToken:
-          '0063dc9b22d18a8405ea10efc0fcc2054d7IAB9MBbW+A8azp9iIPuwDVqdU7yAziFRHKCmou0VsFt48z37XygAAAAAEACWMZDZsxL5YAEAAQCzEvlg',
+          '0063dc9b22d18a8405ea10efc0fcc2054d7IACSQCZEpK+36X1cgSiXKvm4Xt5SrApUwYkNGixu3X415z37XygAAAAAEAAZP2Q5owMBYQEAAQCiAwFh',
         channelName: 'voiceDemoChannel1',
         userId: '100',
         extraInfo: '',
