@@ -7,7 +7,7 @@
         :src="imageName"
         v-if="imageName"
       />
-      <input type="file" @change="tirggerFile($event)" />
+      <input multiple="multiple" type="file" @change="tirggerFile($event)" />
       <div class="action-button" @click="alertAction">
         <span>alert</span>
       </div>
@@ -23,8 +23,14 @@
       <div class="action-button" @click="takePhoto">
         <span>拍照</span>
       </div>
-      <div class="action-button" @click="chooseFile">
+      <div class="action-button" @click="selectFile">
         <span>选择文件</span>
+      </div>
+      <div class="action-button" @click="openFolder">
+        <span>打开指定文件夹</span>
+      </div>
+      <div class="action-button" @click="createNewFolder">
+        <span>新建文件夹</span>
       </div>
       <div class="action-button" @click="loginWithOutToken">
         <span>登录不需要token</span>
@@ -97,6 +103,14 @@ export default {
       // String ACCEPT_CAMERA = "camera";
       // String ACCEPT_FILE = "file";
       console.log('triggerFile', event.target.files);
+
+      let fr = new FileReader();
+
+      fr.onload = function(e) {
+        console.log('e', e);
+      };
+
+      fr.readAsText(event.target.files[0], 'UTF-8');
     },
     alertAction() {
       quick.ui.alert({
@@ -125,6 +139,29 @@ export default {
         error: function(error) {}
       });
     },
+    selectFile() {
+      quick.util.selectFile({
+        success: (result) => {
+          console.log('selectFile', result);
+        }
+      });
+    },
+    openFolder() {
+      quick.util.openFolder({
+        path: '/DCIM',
+        success: (result) => {
+          console.log('openFolder', result);
+        }
+      });
+    },
+    createNewFolder() {
+      quick.util.createFolder({
+        path: '/com/test/test',
+        success: (result) => {
+          console.log('createFolder', result);
+        }
+      });
+    },
     selectPhoto() {
       quick.util.selectImage({
         photoCount: 9,
@@ -132,16 +169,23 @@ export default {
         selectedPhotos: [],
         success: (result) => {
           console.log('selectImages', result.resultData);
-          this.imageName = 'http://localimg' + result.resultData;
 
-          var fr = new FileReader();
-          fr.readAsDataURL(this.imageName);
-          fr.onload = (e) => {
-            console.log('fileRead', e);
-          };
-          fr.onerror = (e) => {
-            console.log('fileRead err', e);
-          };
+          // this.imageName = 'http://localimg' + result.resultData[0];
+          // quick.util.selectFile({
+          //   path: result.resultData[0],
+          //   success: (result) => {
+          //     console.log('selectFile', result);
+          //   }
+          // });
+
+          // var fr = new FileReader();
+          // fr.readAsDataURL(this.imageName);
+          // fr.onload = (e) => {
+          //   console.log('fileRead', e);
+          // };
+          // fr.onerror = (e) => {
+          //   console.log('fileRead err', e);
+          // };
           /**
          * 选择完图片后返回
          * {
@@ -149,7 +193,9 @@ export default {
            }
          */
         },
-        error: function(error) {}
+        error: function(error) {
+          console.log('errror', error);
+        }
       });
     },
     takePhoto() {
@@ -165,14 +211,6 @@ export default {
          */
         },
         error: function(error) {}
-      });
-    },
-    chooseFile() {
-      quick.util.selectFile({
-        className: 'FileChooseActivity',
-        success: (result) => {
-          console.log('selectFile', result);
-        }
       });
     },
     loginWithOutToken() {
@@ -284,6 +322,17 @@ export default {
         success: function() {},
         error: function(error) {}
       });
+    },
+    getBase64Image(img) {
+      var canvas = document.createElement('canvas');
+      canvas.width = img.width;
+      canvas.height = img.height;
+
+      var ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, img.width, img.height);
+      var ext = img.src.substring(img.src.lastIndexOf('.') + 1).toLowerCase();
+      var dataURL = canvas.toDataURL('image/' + ext);
+      return dataURL;
     }
   }
 };
