@@ -3,7 +3,7 @@ import App from './App.vue';
 
 Vue.config.productionTip = false;
 
-var quick = require('./external/quick.min');
+var quick = require('./external/quick');
 
 window.quick = quick;
 require('./external/quick.native.min');
