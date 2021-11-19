@@ -13,6 +13,9 @@
         <div class="action-button" @click="testWebView">
           <span>testWebView</span>
         </div>
+        <div class="action-button" @click="jumpToWebView">
+          <span>jumpToWebView</span>
+        </div>
         <div class="action-button" @click="alertAction">
           <span>alert</span>
         </div>
@@ -120,6 +123,17 @@
       },
       testWebView() {
         WebBridge.testJs();
+      },
+      jumpToWebView() {
+        // android
+        // WebBridge.jumpToWebView(
+        //   "https://xiu2.net/it/details/6105a3c479193629344217b9"
+        // );
+        console.log("window", window.webkit.messageHandlers);
+        // ios
+        window.webkit.messageHandlers.jumpToWebView.postMessage(
+          "https://xiu2.net/it/details/6105a3c479193629344217b9"
+        );
       },
       alertAction() {
         quick.ui.alert({
