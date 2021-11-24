@@ -13,6 +13,9 @@
         <div class="action-button" @click="testWebView">
           <span>testWebView</span>
         </div>
+        <div class="action-button" @click="getVendorInfo">
+          <span>获取device信息</span>
+        </div>
         <div class="action-button" @click="jumpToWebView">
           <span>jumpToWebView</span>
         </div>
@@ -134,6 +137,13 @@
         window.webkit.messageHandlers.jumpToWebView.postMessage(
           "https://xiu2.net/it/details/6105a3c479193629344217b9"
         );
+      },
+      getVendorInfo() {
+        quick.device.getVendorInfo({
+          success: function(res) {
+            console.log("res", res)
+          }
+        })
       },
       alertAction() {
         quick.ui.alert({
